@@ -18,9 +18,14 @@ Then open **http://localhost:3000** in your browser.
 1. Pick a **field type** (15 sports supported: soccer, baseball, basketball, tennis, softball, football, cricket, rugby, lacrosse, volleyball, handball, bocce, hockey, swimming, track)
 2. Choose a **date range** (up to 14 days)
 3. Click **Search Fields** — results appear in a grid with one row per field and one column per date
-4. Click any **green/yellow cell** to see individual time slots for that field + date
-5. Use the **borough filter** or **text search** to narrow results
-6. Click **Export CSV** to download the grid as a spreadsheet
+4. Cell colors indicate availability level:
+   - **Green** — More Availability (>66% of time slots open)
+   - **Yellow** — Partial Availability (34–66% of time slots open)
+   - **Red** — Low Availability (1–33% of time slots open)
+   - **Gray** — Not Available (no permit slots offered for that date)
+5. Click any colored cell to see individual time slots for that field + date
+6. Use the **borough filter** or **text search** to narrow results
+7. Click **Export CSV** to download the grid as a spreadsheet
 
 ## Architecture
 
