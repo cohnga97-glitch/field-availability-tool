@@ -74,6 +74,8 @@ async function onSearch(e) {
   hideError();
   hide(resultsSection);
   hide(emptyState);
+  hide(statusBar);
+  hide(legend);
 
   try {
     const url = `/api/availability?sport=${sport}&start=${start}&end=${end}`;
