@@ -182,7 +182,8 @@ function renderGrid(dates, fields, sport) {
           td.innerHTML = `<span title="${avail}/${total} slots available">${avail} open</span>`;
           td.addEventListener('click', () => openModal(field, d, slots));
         } else {
-          td.className = 'cell-partial';
+          const ratio = avail / total;
+          td.className = ratio <= 0.33 ? 'cell-partial-low' : ratio <= 0.66 ? 'cell-partial-mid' : 'cell-partial-high';
           td.innerHTML = `<span title="${avail}/${total} slots available">${avail}/${total}</span>`;
           td.addEventListener('click', () => openModal(field, d, slots));
         }
