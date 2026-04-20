@@ -35,9 +35,23 @@ header {
   background: var(--green);
   color: #fff;
   padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .header-inner h1 { font-size: 1.5rem; font-weight: 700; }
 .header-inner .subtitle { opacity: .85; margin-top: 4px; font-size: .875rem; }
+.client-badge {
+  font-size: .8rem;
+  opacity: .9;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 6px;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
 
 /* ── Main layout ─────────────────────────────────────────────────────────────── */
 main {
