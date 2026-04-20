@@ -1,0 +1,16 @@
+{
+  "name": "field-availability-tool",
+  "version": "1.0.0",
+  "description": "NYC Parks athletic field availability search tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "scrape": "node scraper.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC Parks Field Availability</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>🌳 NYC Parks Field Availability</h1>
+    <p class="subtitle">Compare athletic field availability across all NYC parks at a glance</p>
+  </div>
+</header>
+
+<main>
+  <!-- ── Search controls ── -->
+  <section class="controls card">
+    <form id="search-form">
+      <div class="control-row">
+
+        <div class="control-group">
+          <label for="sport">Field type</label>
+          <div class="sport-buttons" role="group" aria-label="Sport selection">
+            <button type="button" class="sport-btn active" data-sport="soccer">⚽ Soccer</button>
+            <button type="button" class="sport-btn" data-sport="baseball">⚾ Baseball</button>
+            <button type="button" class="sport-btn" data-sport="basketball">🏀 Basketball</button>
+          </div>
+          <input type="hidden" id="sport" name="sport" value="soccer" />
+        </div>
+
+        <div class="control-group">
+          <label for="start-date">Start date</label>
+          <input type="date" id="start-date" name="start" required />
+        </div>
+
+        <div class="control-group">
+          <label for="end-date">End date</label>
+          <input type="date" id="end-date" name="end" required />
+        </div>
+
+        <div class="control-group control-group--action">
+          <label>&nbsp;</label>
+          <button type="submit" class="btn-primary" id="search-btn">
+            <span class="btn-text">Search Fields</span>
+            <span class="spinner" hidden></span>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="filter-row" id="filter-row" hidden>
+        <label for="borough-filter">Filter by borough:</label>
+        <select id="borough-filter">
+          <option value="">All boroughs</option>
+        </select>
+        <label for="text-filter">Search fields:</label>
+        <input type="text" id="text-filter" placeholder="e.g. Prospect Park" />
+      </div>
+    </form>
+  </section>
+
+  <!-- ── Status bar ── -->
+  <div id="status-bar" hidden>
+    <span id="status-msg"></span>
+    <span id="status-count"></span>
+  </div>
+
+  <!-- ── Legend ── -->
+  <div id="legend" hidden>
+    <span class="legend-item"><span class="swatch swatch--available"></span>Available</span>
+    <span class="legend-item"><span class="swatch swatch--booked"></span>Booked / Unavailable</span>
+    <span class="legend-item"><span class="swatch swatch--unknown"></span>No data</span>
+  </div>
+
+  <!-- ── Error banner ── -->
+  <div id="error-banner" class="error-banner" hidden></div>
+
+  <!-- ── Results grid ── -->
+  <section id="results-section" hidden>
+    <div class="results-toolbar">
+      <h2 id="results-title">Results</h2>
+      <button class="btn-outline btn-sm" id="export-btn">Export CSV</button>
+    </div>
+    <div id="grid-wrapper">
+      <div id="grid-scroll">
+        <table id="availability-grid">
+          <thead id="grid-head"></thead>
+          <tbody id="grid-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Empty state ── -->
+  <div id="empty-state" class="empty-state" hidden>
+    <div class="empty-icon">🏟️</div>
+    <p>No fields found for these filters.</p>
+    <p class="muted">Try a different date range or sport type.</p>
+  </div>
+</main>
+
+<footer>
+  <p>Data sourced from <a href="https://www.nycgovparks.org/permits/field-and-court" target="_blank" rel="noopener">NYC Parks Permit System</a>. Not affiliated with NYC Parks.</p>
+  <p class="muted">Cache: <span id="cache-info">—</span> &nbsp;·&nbsp; <button class="btn-link" id="clear-cache-btn">Clear cache</button></p>
+</footer>
+
+<!-- ── Slot detail modal ── -->
+<div id="modal-overlay" class="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <h3 id="modal-title">Slot Details</h3>
+      <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

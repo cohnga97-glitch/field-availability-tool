@@ -1,0 +1,4 @@
+node_modules/
+cache/*.json
+cache/*.html
+cache/*.js
