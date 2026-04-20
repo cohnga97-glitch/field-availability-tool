@@ -15,7 +15,7 @@ Then open **http://localhost:3000** in your browser.
 
 ## Usage
 
-1. Pick a **field type** (soccer, baseball, basketball)
+1. Pick a **field type** (15 sports supported: soccer, baseball, basketball, tennis, softball, football, cricket, rugby, lacrosse, volleyball, handball, bocce, hockey, swimming, track)
 2. Choose a **date range** (up to 14 days)
 3. Click **Search Fields** — results appear in a grid with one row per field and one column per date
 4. Click any **green/yellow cell** to see individual time slots for that field + date
@@ -92,7 +92,7 @@ Field IDs like `M015-SOCCER-1` encode a NYC Parks property number (`M015`). Real
 `/api/athletic-fields` is not a published API — it was reverse-engineered from the map page's network traffic. It may change without notice.
 
 ### Availability = permitted slots only
-The API returns fields that are available for permitting at a given time. Fields showing "Closed" are simply not offered by the permit system for that date — they may be closed seasonally, under maintenance, or not yet open for booking.
+The API returns fields that are available for permitting at a given time. Fields showing "Not Available" are simply not offered by the permit system for that date — they may be closed seasonally, fully booked, under maintenance, or not yet open for booking.
 
 ### Hourly granularity
 Availability is sampled every 2 hours (7 snapshots/day). A field that opens or closes mid-window may not be captured exactly. Reduce `QUERY_HOURS` in `scraper.js` to 1-hour steps for finer resolution at the cost of speed.
