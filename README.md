@@ -2,16 +2,16 @@
 
 Search and compare athletic field availability across all NYC parks in a single calendar grid view.
 
+**Live demo:** https://web-production-dc256.up.railway.app
+
 ## Setup
 
 ```bash
-npm install   # installs Express + Puppeteer (~300 MB — Chromium is bundled)
+npm install   # installs Express only (~5 MB, no browser dependency)
 npm start     # starts the server at http://localhost:3000
 ```
 
 Then open **http://localhost:3000** in your browser.
-
-> **First run note:** Puppeteer downloads a ~170 MB Chromium binary during `npm install`. This is required to render the JavaScript-heavy NYC Parks site and avoid 403 errors that block plain HTTP clients.
 
 ## Usage
 
@@ -27,12 +27,13 @@ Then open **http://localhost:3000** in your browser.
 ```
 field-availability-tool/
 ├── server.js        Express API server + static file serving
-├── scraper.js       Puppeteer-based scraper for nycgovparks.org
+├── scraper.js       Fetches NYC Parks API + park name lookup + JSON cache
 ├── cache/           JSON cache files (auto-created, 6-hour TTL)
-│   └── soccer_2026-04-20.json
+│   ├── soccer_2026-04-20.json
+│   └── park_names.json
 └── public/
     ├── index.html   Single-page app shell
-    ├── style.css    All styles (CSS variables, sticky grid, modal)
+    ├── style.css    Styles (CSS variables, sticky grid, modal)
     └── app.js       Frontend logic (fetch, render, filter, CSV export)
 ```
 
@@ -42,72 +43,68 @@ field-availability-tool/
 Browser → GET /api/availability?sport=soccer&start=…&end=…
   → server.js: validate params, build date list
     → scraper.js (per date):
-        1. Check cache/soccer_YYYY-MM-DD.json (6-hour TTL)
-        2. If miss: Puppeteer loads nycgovparks.org/permits/field-and-court/search
-        3. Extracts field list from DOM (multiple selector strategies)
-        4. Falls back to map page + window variable extraction if list is empty
-        5. Saves result to cache
-  → Pivot data: date→fields  ➜  field→{date:slots}
+        1. Check cache/soccer_YYYY-MM-DD.json (6-hour TTL) → return if fresh
+        2. Query NYC Parks API at 7 time slots (8am, 10am, 12pm, 2pm, 4pm, 6pm, 8pm):
+             GET nycgovparks.org/api/athletic-fields?datetime=YYYY-MM-DD+H:mm
+             → { dusk: "20:15", l: ["M015-SOCCER-1", "X002-SOCCER-1", ...] }
+        3. Aggregate available field IDs across all time slots
+        4. Look up real park names from NYC Open Data (cached in park_names.json)
+        5. Decode field IDs → human-readable names + borough
+        6. Save to cache
+  → Pivot: date→fields  ➜  field→{date: slots[]}
   → Return JSON to browser
 Browser → renders sticky-header comparison grid
 ```
 
-### Scraper strategies (in order)
+### How the API was discovered
 
-The NYC Parks site structure is not formally documented, so the scraper tries multiple approaches:
+The NYC Parks site (`/permits/field-and-court/map`) blocks plain HTTP requests with 403. To find the real data source, Puppeteer was used once to load the page and intercept all XHR/fetch network requests. This revealed:
 
-1. **Search results page** (`/permits/field-and-court/search?type=Soccer&date=…`) — looks for common result-list CSS selectors
-2. **Map page** (`/permits/field-and-court/map?type=Soccer&date=…`) — tries `window.*` data variables, Leaflet marker attributes, inline `<script>` JSON blobs
-3. **Per-field detail pages** — if a field row includes a link, follows it and extracts time-slot tables
+```
+GET /api/athletic-fields?datetime=YYYY-MM-DD+H:mm
+```
+
+This endpoint accepts standard browser headers and returns JSON directly — no headless browser needed for ongoing use.
+
+### Park name lookup
+
+Field IDs like `M015-SOCCER-1` encode a NYC Parks property number (`M015`). Real park names are resolved by querying the **NYC Open Data Parks Properties dataset** (`data.cityofnewyork.us/resource/enfh-gkve.json`) using the `gispropnum` field. Results are cached permanently in `cache/park_names.json`.
 
 ### Rate limiting
 
-- Minimum **1.2 seconds** between Puppeteer page navigations (`DELAY_MS` in `scraper.js`)
-- **6-hour JSON cache** avoids re-scraping unchanged data
-- Maximum **14-day** date range enforced by the API to limit burst traffic
+- Minimum **1 second** between API requests (`DELAY_MS` in `scraper.js`)
+- **6-hour JSON cache** avoids redundant requests
+- **7 time slots per day** (every 2 hours) balances coverage vs. speed
+- Maximum **14-day** date range enforced server-side
 
 ## API endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET`  | `/api/availability?sport=&start=&end=` | Main data endpoint |
-| `GET`  | `/api/sports` | List of supported sports |
+| `GET`  | `/api/availability?sport=&start=&end=` | Main availability data |
+| `GET`  | `/api/sports` | List supported sports |
 | `GET`  | `/api/cache/list` | List cached files |
 | `DELETE` | `/api/cache?sport=&date=` | Invalidate one cache entry |
 
 ## Known limitations
 
-### Site structure uncertainty
-The scraper was written against the public-facing URL structure of `nycgovparks.org/permits/field-and-court`. The NYC Parks site:
-- May use heavy client-side JavaScript that changes without notice
-- Returns 403 to plain HTTP clients (hence Puppeteer)
-- Does not publish a documented API
+### Undocumented API
+`/api/athletic-fields` is not a published API — it was reverse-engineered from the map page's network traffic. It may change without notice.
 
-If the scraper returns empty results, open the browser DevTools Network tab while visiting the site manually and look for XHR/fetch calls — the endpoint or selector patterns may have changed.
+### Availability = permitted slots only
+The API returns fields that are available for permitting at a given time. Fields showing "Closed" are simply not offered by the permit system for that date — they may be closed seasonally, under maintenance, or not yet open for booking.
 
-### No guaranteed slot data
-Time-slot availability (morning / afternoon / evening blocks) is only populated when a field's detail page exposes a structured table or `data-*` attributes. Many fields may show only "open" / "full" status without granular times.
+### Hourly granularity
+Availability is sampled every 2 hours (7 snapshots/day). A field that opens or closes mid-window may not be captured exactly. Reduce `QUERY_HOURS` in `scraper.js` to 1-hour steps for finer resolution at the cost of speed.
 
-### Session / login walls
-Some permit availability details require a logged-in NYC.gov account. The scraper uses a bare (unauthenticated) browser session and will see only the public-facing data.
+### No login / permit details
+The tool shows public availability only. Actual permit application requires a NYC Parks account. Permit pricing, rules, and field-specific restrictions are not shown.
 
-### Puppeteer on Apple Silicon / Linux
-If Puppeteer fails to launch Chromium, try:
-```bash
-# macOS (Apple Silicon)
-PUPPETEER_PLATFORM=mac_arm npm install
-
-# Linux (missing shared libs)
-sudo apt-get install -y libgbm-dev libxshmfence-dev
-```
-
-### Performance
-Puppeteer spins up a full headless browser for each scrape batch. Expect 5–15 seconds per date requested (uncached). The 6-hour cache makes repeat searches fast.
+### Cache on Railway
+Railway's filesystem is ephemeral — the cache resets on each redeploy. Cold searches (no cache) take ~30 seconds for a 7-day range. This could be improved by adding a persistent database (e.g. Railway's Postgres add-on).
 
 ## Configuration
 
 | Env var | Default | Description |
 |---------|---------|-------------|
-| `PORT`  | `3000`  | HTTP port for the Express server |
-
-You can also edit `DELAY_MS` (line ~14 of `scraper.js`) to increase the politeness delay.
+| `PORT`  | `3000`  | HTTP port (Railway sets this automatically) |
