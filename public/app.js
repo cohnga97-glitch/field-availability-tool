@@ -177,14 +177,10 @@ function renderGrid(dates, fields, sport) {
         if (avail === 0) {
           td.className = 'cell-booked';
           td.innerHTML = `<span title="0/${total} slots available">Full</span>`;
-        } else if (avail === total) {
-          td.className = 'cell-available';
-          td.innerHTML = `<span title="${avail}/${total} slots available">${avail} open</span>`;
-          td.addEventListener('click', () => openModal(field, d, slots));
         } else {
           const ratio = avail / total;
-          td.className = ratio <= 0.33 ? 'cell-partial-low' : ratio <= 0.66 ? 'cell-partial-mid' : 'cell-partial-high';
-          td.innerHTML = `<span title="${avail}/${total} slots available">${avail}/${total}</span>`;
+          td.className = ratio <= 0.33 ? 'cell-partial-low' : ratio <= 0.66 ? 'cell-partial-mid' : 'cell-available';
+          td.innerHTML = `<span title="${avail}/${total} slots available">${avail === total ? avail + ' open' : avail + '/' + total}</span>`;
           td.addEventListener('click', () => openModal(field, d, slots));
         }
       }
