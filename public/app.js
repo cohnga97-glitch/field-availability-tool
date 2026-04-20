@@ -8,7 +8,7 @@ let filteredFields = [];
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const form           = document.getElementById('search-form');
-const sportInput     = document.getElementById('sport');
+const sportInput     = document.getElementById('sport'); // now a <select>
 const startInput     = document.getElementById('start-date');
 const endInput       = document.getElementById('end-date');
 const searchBtn      = document.getElementById('search-btn');
@@ -43,14 +43,7 @@ const modalClose     = document.getElementById('modal-close');
   startInput.value = fmtDate(today);
   endInput.value   = fmtDate(next7);
 
-  // Sport buttons
-  document.querySelectorAll('.sport-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.sport-btn').forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      sportInput.value = btn.dataset.sport;
-    });
-  });
+  // Sport select — value is read directly from the <select> on submit
 
   form.addEventListener('submit', onSearch);
   boroughFilter.addEventListener('change', applyFilters);

@@ -60,7 +60,9 @@ function mergeBySport(resultsByDate) {
 // ── routes ────────────────────────────────────────────────────────────────────
 
 app.get('/api/sports', (_req, res) => {
-  res.json(['soccer', 'baseball', 'basketball']);
+  res.json(['soccer','baseball','basketball','tennis','softball',
+            'football','cricket','rugby','lacrosse','volleyball',
+            'handball','bocce','hockey','swimming','track']);
 });
 
 app.get('/api/availability', async (req, res) => {
@@ -69,7 +71,10 @@ app.get('/api/availability', async (req, res) => {
   if (!sport || !start || !end) {
     return res.status(400).json({ error: 'sport, start, and end are required' });
   }
-  if (!['soccer', 'baseball', 'basketball'].includes(sport)) {
+  const validSports = ['soccer','baseball','basketball','tennis','softball',
+                       'football','cricket','rugby','lacrosse','volleyball',
+                       'handball','bocce','hockey','swimming','track'];
+  if (!validSports.includes(sport)) {
     return res.status(400).json({ error: 'Unknown sport' });
   }
 

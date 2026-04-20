@@ -80,27 +80,17 @@ main {
   color: var(--muted);
 }
 
-.sport-buttons {
-  display: flex;
-  gap: 6px;
-}
-.sport-btn {
-  padding: 7px 14px;
-  border: 2px solid var(--border);
-  border-radius: 20px;
+.sport-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: .875rem;
+  color: var(--text);
   background: #fff;
   cursor: pointer;
-  font-size: .875rem;
-  transition: all .15s;
-  white-space: nowrap;
+  min-width: 180px;
 }
-.sport-btn:hover { border-color: var(--green); color: var(--green); }
-.sport-btn.active {
-  border-color: var(--green);
-  background: var(--green-light);
-  color: var(--green-dark);
-  font-weight: 600;
-}
+.sport-select:focus { outline: 2px solid var(--green); border-color: transparent; }
 
 input[type="date"] {
   padding: 8px 10px;

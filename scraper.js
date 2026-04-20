@@ -31,7 +31,8 @@ const BOROUGH_PREFIX = {
 };
 
 const SPORTS = ['SOCCER','BASEBALL','BASKETBALL','TENNIS','SOFTBALL',
-                'FOOTBALL','CRICKET','RUGBY','LACROSSE','VOLLEYBALL'];
+                'FOOTBALL','CRICKET','RUGBY','LACROSSE','VOLLEYBALL',
+                'HANDBALL','BOCCE','HOCKEY','SWIMMING','TRACK'];
 
 // ── HTTP helper ───────────────────────────────────────────────────────────────
 
@@ -219,8 +220,12 @@ async function scrapeDay(sport, dateStr) {
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
+const VALID_SPORTS = ['soccer','baseball','basketball','tennis','softball',
+                      'football','cricket','rugby','lacrosse','volleyball',
+                      'handball','bocce','hockey','swimming','track'];
+
 async function scrapeAvailability(sport, dates) {
-  if (!['soccer', 'baseball', 'basketball'].includes(sport)) {
+  if (!VALID_SPORTS.includes(sport)) {
     throw new Error(`Unknown sport: ${sport}`);
   }
   loadParkNames();
