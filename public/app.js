@@ -167,7 +167,7 @@ function renderGrid(dates, fields, sport) {
 
       if (slots.length === 0) {
         td.className = 'cell-unknown';
-        td.textContent = 'Closed';
+        td.textContent = 'Not Available';
       } else {
         const avail = slots.filter((s) => s.available).length;
         const total = slots.length;
