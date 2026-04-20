@@ -188,7 +188,7 @@ input[type="date"]:focus { outline: 2px solid var(--green); border-color: transp
   display: inline-block;
 }
 .swatch--available { background: var(--available-bg); border: 1px solid var(--available); }
-.swatch--booked    { background: var(--booked-bg);    border: 1px solid var(--booked); }
+.swatch--partial   { background: #fff9c4; border: 1px solid #f57f17; }
 .swatch--unknown   { background: var(--unknown-bg);   border: 1px solid var(--unknown); }
 
 /* ── Error banner ────────────────────────────────────────────────────────────── */
