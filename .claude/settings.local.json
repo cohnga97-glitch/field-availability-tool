@@ -3,7 +3,13 @@
     "allow": [
       "WebFetch(domain:www.nycgovparks.org)",
       "Bash(npm install *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git -C /Users/emmaburns/field-availability-tool add public/index.html public/style.css)",
+      "Bash(git -C /Users/emmaburns/field-availability-tool commit -m ' *)",
+      "Bash(git *)"
     ]
   }
 }
