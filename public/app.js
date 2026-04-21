@@ -67,9 +67,6 @@ async function onSearch(e) {
   if (!start || !end) return showError('Please select a start and end date.');
   if (new Date(start) > new Date(end)) return showError('Start date must be before end date.');
 
-  const diffDays = (new Date(end) - new Date(start)) / 86400000;
-  if (diffDays > 13) return showError('Date range is limited to 14 days to avoid overloading the server.');
-
   setLoading(true);
   hideError();
   hide(resultsSection);
