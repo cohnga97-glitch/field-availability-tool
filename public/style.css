@@ -142,6 +142,7 @@ input[type="date"]:focus { outline: 2px solid var(--green); border-color: transp
   animation: spin .6s linear infinite;
   display: inline-block;
 }
+.spinner[hidden] { display: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .filter-row {
