@@ -84,12 +84,6 @@ app.get('/api/availability', async (req, res) => {
     return res.status(400).json({ error: 'Invalid date range' });
   }
 
-  const maxDays = 14;
-  const diffDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-  if (diffDays > maxDays) {
-    return res.status(400).json({ error: `Date range too large (max ${maxDays} days)` });
-  }
-
   const dates = dateRange(formatDate(start), formatDate(end));
 
   try {
